@@ -4,13 +4,29 @@
   <meta charset="UTF-8">
   <title>Flores Amarillas by AlexDev</title>
   <link rel="stylesheet" href="./style.css">
+  <style>
+    #headline{
+  display:inline-block;
+  white-space:nowrap;
+  overflow:hidden;
+  border-right:2px solid currentColor;      /* cursor */
+  animation: caret .8s steps(1) infinite;   /* parpadeo */
+}
+@keyframes caret { 50% { border-color: transparent; } }
 
+/* Si tu página tiene un canvas/overlay por encima, súbelo: */
+.frase-container, #headline{ position:relative; z-index: 5; }
+
+  </style>
 </head>
 <body>
 <!-- partial:index.partial.html -->
 <body class="not-loaded">
   <div class="text-overlay">
-  <h1>Para ti - Te Amo</h1>
+<!-- Reemplaza tu H1 por este (puedes cambiar/añadir frases en data-words) -->
+<h1 id="headline"
+    data-words='["Mar1huana cybernetica para ti","Fer ♥️","La changa✨", "De Juan 🏋🏻‍♀️🏋🏻‍♀️🏋🏻‍♀️🏋🏻‍♀️🏋🏻‍♀️"]'>
+</h1>
 </div>
   <div class="night"></div>
 
@@ -1770,6 +1786,40 @@ background-color: #ffd700;}
       </div>
     </div>
   </div>
+  <script>
+(function(){
+  const el = document.getElementById('headline');
+  if(!el) return;
+
+  // Lee frases del atributo data-words (JSON)
+  let words = [];
+  try { words = JSON.parse(el.getAttribute('data-words') || '[]'); } catch {}
+  if(!Array.isArray(words) || !words.length){
+    words = ['Mar1huana cybernetica para ti']; // fallback
+  }
+
+  // Velocidades (ms)
+  const TYPE=70, DEL=45, HOLD=900, GAP=350;
+
+  let i=0, j=0, deleting=false;
+
+  function tick(){
+    const w = words[i];
+    el.textContent = deleting ? w.slice(0, --j) : w.slice(0, ++j);
+
+    let t = deleting ? DEL : TYPE;
+    if(!deleting && j===w.length){ deleting=true; t=HOLD; }
+    else if(deleting && j===0){ deleting=false; i=(i+1)%words.length; t=GAP; }
+
+    setTimeout(tick, t);
+  }
+  tick();
+
+  // Por si luego quieres cambiar frases en caliente:
+  window.setTypewriterWords = (arr)=>{ if(Array.isArray(arr)&&arr.length){ words=arr.slice(); i=0;j=0;deleting=false; } };
+})();
+</script>
+
 </body>
 <!-- partial -->
   <script  src="./script.js"></script>
